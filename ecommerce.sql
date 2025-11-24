@@ -3,6 +3,16 @@
 BEGIN;
 
 
+ALTER TABLE IF EXISTS public.productos DROP CONSTRAINT IF EXISTS None;
+
+ALTER TABLE IF EXISTS public.pedidos DROP CONSTRAINT IF EXISTS None;
+
+ALTER TABLE IF EXISTS public.pedidos DROP CONSTRAINT IF EXISTS None;
+
+
+
+DROP TABLE IF EXISTS public.clientes;
+
 CREATE TABLE IF NOT EXISTS public.clientes
 (
     cliente_id serial NOT NULL,
@@ -10,6 +20,8 @@ CREATE TABLE IF NOT EXISTS public.clientes
     correo character varying(100),
     PRIMARY KEY (cliente_id)
 );
+
+DROP TABLE IF EXISTS public.productos;
 
 CREATE TABLE IF NOT EXISTS public.productos
 (
@@ -21,30 +33,35 @@ CREATE TABLE IF NOT EXISTS public.productos
     PRIMARY KEY (id_producto)
 );
 
+DROP TABLE IF EXISTS public.categorias;
+
 CREATE TABLE IF NOT EXISTS public.categorias
 (
-    id_categoria character varying(100),
-    nombre_categoria character varying(100)
+    id_categoria serial NOT NULL,
+    nombre_categoria character varying(100),
+    PRIMARY KEY (id_categoria)
 );
+
+DROP TABLE IF EXISTS public.pedidos;
 
 CREATE TABLE IF NOT EXISTS public.pedidos
 (
-    id_cliente character varying(100)[] NOT NULL,
+    id_cliente integer NOT NULL,
     fecha character varying(100)[] NOT NULL,
-    producto character varying(100)[] NOT NULL
+    producto integer NOT NULL
 );
 
-ALTER TABLE IF EXISTS public.clientes
-    ADD FOREIGN KEY (cliente_id)
-    REFERENCES public.pedidos (id_cliente) MATCH SIMPLE
+ALTER TABLE IF EXISTS public.productos
+    ADD FOREIGN KEY (categoria)
+    REFERENCES public.categorias (id_categoria) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.productos
-    ADD FOREIGN KEY (categoria)
-    REFERENCES public.categorias (nombre_categoria) MATCH SIMPLE
+ALTER TABLE IF EXISTS public.pedidos
+    ADD FOREIGN KEY (id_cliente)
+    REFERENCES public.clientes (cliente_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -52,9 +69,10 @@ ALTER TABLE IF EXISTS public.productos
 
 ALTER TABLE IF EXISTS public.pedidos
     ADD FOREIGN KEY (producto)
-    REFERENCES public.productos (nombre_producto) MATCH SIMPLE
+    REFERENCES public.productos (id_producto) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 END;
+
