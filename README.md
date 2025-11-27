@@ -16,3 +16,5 @@ Terminadas todas las querys solicitadas, modificado columnas y tablas, agregado 
 Base de datos simulando un ecommerce, con tabla de clientes, pedidos, productos con inventario y categorias
 //
 Agregado seed.sql
+//
+https://github.com/mmorenoo1412/e-commerce-db-m3
