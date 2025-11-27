@@ -76,3 +76,174 @@ ALTER TABLE IF EXISTS public.pedidos
 
 END;
 
+insert into clientes (nombre, correo) values
+('Juan Pérez', 'juan@gmail.com'),
+('Ana Gómez', 'ana@gmail.com'),
+('Carlos Muñoz', 'carlos@gmail.com'),
+('María López', 'maria@gmail.com'),
+('Pedro Rivas', 'pedro@gmail.com'),
+('Lucía Fuentes', 'lucia@gmail.com'),
+('Diego Morales', 'diego@gmail.com'),
+('Sofía Vega', 'sofia@gmail.com'),
+('Javier Castro', 'javier@gmail.com'),
+('Valentina Ruiz', 'valentina@gmail.com');
+
+select * from clientes;
+
+insert into productos (nombre_producto, precio, stock, categoria) values
+('Laptop Lenovo', 650000, 10, 5),
+('Laptop HP', 720000, 8, 5),
+('Mouse Logitech', 15000, 50, 3),
+('Teclado Mecánico', 35000, 25, 3),
+('Monitor Samsung 24"', 120000, 12, 4),
+('SSD 480GB', 45000, 30, 2),
+('Memoria RAM 16GB', 60000, 18, 2),
+('Pendrive 32GB', 9000, 100, 2),
+('Audífonos Sony', 25000, 20, 3),
+('Webcam Full HD', 30000, 15, 3),
+('Parlantes Bluetooth', 28000, 22, 3),
+('Silla Gamer', 150000, 5, 7),
+('Router TP-Link', 28000, 19, 3),
+('Impresora HP', 90000, 7, 7),
+('Tablet Samsung', 140000, 10, 7),
+('Mouse Pad XL', 8000, 40, 7),
+('Cargador Universal', 12000, 35, 1),
+('Hub USB 4 Puertos', 10000, 28, 7),
+('MicroSD 128GB', 22000, 32, 2),
+('Smartwatch Xiaomi', 65000, 14, 7);
+
+select * from productos;
+
+insert into categorias (nombre_categoria) values
+('Cargadores'),
+('Componentes'),
+('Perifericos'),
+('Monitores'),
+('Laptops'),
+('Extraibles'),
+('Accesorios');
+
+select * from categorias;
+
+select nombre_categoria from categorias
+full join productos on productos.categoria = categorias.id_categoria;
+
+select nombre_producto, stock, precio, nombre_categoria from productos 
+join categorias on categorias.id_categoria = productos.categoria;
+
+select * from pedidos;
+begin;
+insert into pedidos (id_cliente, fecha, producto) values 
+(7, '{17-10-2025}', 27),
+(3, '{24-10-2025}', 29),
+(5, '{10-10-2025}', 31),
+(6, '{31-11-2025}', 31),
+(3, '{01-11-2025}', 31),
+(1, '{01-11-2025}', 30),
+(4, '{03-11-2025}', 28),
+(7, '{07-11-2025}', 27),
+(9, '{10-11-2025}', 29),
+(7, '{15-11-2025}', 45),
+(5, '{10-11-2025}', 40),
+(10, '{23-11-2025}', 36),
+(3, '{22-11-2025}', 30)
+returning *;
+rollback;
+commit;
+
+select * from pedidos;
+select * from productos;
+alter table productos
+add constraint ck_stock check (cast (stock as integer) > 0);
+
+begin;
+update productos set stock = -2 where id_producto = 28;
+rollback;
+
+select * from productos where categoria = 5;
+select * from productos where nombre_producto like 'Laptop%';
+
+truncate table pedidos;
+select * from pedidos;
+
+alter table pedidos add column cantidad varchar(100); 
+select * from pedidos;
+
+insert into pedidos (id_cliente, fecha, producto, cantidad) values 
+(7, '{17-10-2025}', 27, 3),
+(3, '{24-10-2025}', 29, 4),
+(5, '{10-10-2025}', 31, 6),
+(6, '{31-11-2025}', 31, 2),
+(3, '{01-11-2025}', 31, 7),
+(1, '{01-11-2025}', 30, 5),
+(4, '{03-11-2025}', 28, 6),
+(7, '{07-11-2025}', 27, 1),
+(9, '{10-11-2025}', 29, 10),
+(7, '{15-11-2025}', 45, 3),
+(5, '{10-11-2025}', 40, 5),
+(10, '{23-11-2025}', 36, 8),
+(3, '{22-11-2025}', 30, 1);
+select * from pedidos;
+alter table pedidos alter column cantidad type integer using cantidad::integer;
+alter table pedidos alter column producto type integer using producto::integer;
+
+select cantidad, fecha, producto,
+count(cantidad) from pedidos where cantidad >= 1
+group by (cantidad, fecha, producto) order by (cantidad,producto)  desc;
+
+select cantidad, fecha, producto,
+sum(cantidad) from pedidos where producto >= 1 
+group by (producto, fecha, cantidad) order by (producto);
+
+select producto, sum(cantidad)
+from pedidos where producto >= 1
+group by (producto, cantidad, fecha) order by (producto);
+
+select producto, sum (cantidad) from pedidos group by (producto) order by sum desc;
+
+select fecha, producto, sum (cantidad) from pedidos group by (fecha, producto)
+order by fecha;
+
+select id_cliente, count (*) as total_pedidos
+from pedidos group by id_cliente order by total_pedidos desc;
+
+
+select * from productos;
+select * from clientes;
+alter table productos alter column precio type integer using precio::integer;
+Rollback;
+begin;
+insert into pedidos (id_cliente, fecha, producto, cantidad) values
+(1, '{28-11-2025}', 27, 1),
+(1, '{28-11-2025}', 28, 1),
+(1, '{28-11-2025}', 29, 1),
+(1, '{28-11-2025}', 30, 1),
+(1, '{28-11-2025}', 31, 1),
+(1, '{28-11-2025}', 32, 1),
+(1, '{28-11-2025}', 33, 1),
+(1, '{28-11-2025}', 34, 1),
+(1, '{28-11-2025}', 35, 1),
+(1, '{28-11-2025}', 36, 1),
+(1, '{28-11-2025}', 37, 1),
+(1, '{28-11-2025}', 38, 1),
+(1, '{28-11-2025}', 39, 1),
+(1, '{28-11-2025}', 40, 1),
+(1, '{28-11-2025}', 41, 1),
+(1, '{28-11-2025}', 42, 1),
+(1, '{28-11-2025}', 43, 1),
+(1, '{28-11-2025}', 44, 1),
+(1, '{28-11-2025}', 45, 1),
+(1, '{28-11-2025}', 46, 1);
+select sum(precio) as total from productos;
+Rollback;
+select * from productos;
+alter table productos alter column stock type integer using stock::integer;
+
+begin;
+select * from clientes where cliente_id = 3;
+select stock from productos where id_producto = 4;
+insert into pedidos (id_cliente, fecha, producto, cantidad) values
+(1, '{29-11-2025}', 31, 1);
+update productos set stock = stock -1 where id_producto = 31;
+commit;
+rollback;
